@@ -1,0 +1,4 @@
+rootProject.name = 'shop'
+
+include 'shop-gateway'
+include 'shop-api-product'

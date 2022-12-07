@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.crewmate.shop'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2021.0.4")
+	/* 
+	   초기 설정시 2020.0.0 사용했을때 classNotFound..
+	   https://spring.io/projects/spring-cloud
+	   위 사이트를 참고하면 클라우드 버전과 스프링부트 버전간 호환성에 대한 내용이 있음
+	   Boot -v 3.0.x -> 2022.0.x 를 사용하라는데 2022로 올리면 롬복등을 찾지못함.
+	   부트 버전을 2.7.5로 내리고 이에 대응하는 2021.0.x 버전대를 적용 하니 정상동작
+	     ( + 부트 3.0.0이고 클라우드 버전만 2021.0.x로 내렸을경우 request조차 받을수없음 )
+	*/
+}
+
+dependencies {
+	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+	//implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

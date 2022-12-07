@@ -1,0 +1,41 @@
+server:
+  port: 80
+  error:
+    whitelabel:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "gateway"
+  endpoint:
+    gateway:
+      enabled: true # /actuator/gateway/routes 접근시 route 현황을 볼수있음
+
+spring:
+  application:
+    name: shop-gateway
+  main:
+    # app실행시 임베디드 리액티브 웹 서버 (netty 기반) 실행
+    # spirng-cloud-gateway-server에 spring-boot-starter-webflux 의존성이 존재하기에 REACTIVE로 구동
+    # https://ykh6242.tistory.com/entry/Spring-Cloud-Gateway%EA%B0%80-netty-%EA%B8%B0%EB%B0%98-reactive-web-application%EC%9C%BC%EB%A1%9C-%EA%B5%AC%EB%8F%99%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0
+    web-application-type: reactive
+  cloud:
+    gateway:
+      default-filters:
+      - name: GlobalFilter
+        args:
+          baseMessage: Spring Cloud Gateway GlobalFilter
+          preLogger: true
+          postLogger: true
+      routes:
+      - id: shop-api-product
+        uri: http://shop.api-product:9990/
+        predicates:
+        - Path=/api-product/**
+      - id: shop-backoffice
+        uri: http://shop.backoffice:3000/
+        predicates:
+        - Path=/**
